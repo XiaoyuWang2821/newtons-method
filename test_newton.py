@@ -5,27 +5,36 @@ test Newton's method implementation
 
 import numpy as np
 from newton import optimize
+from functools import partial
 
-def logistic_regression(theta, X, y):
+def logistic_regression(theta, X, y, compute_grads=True):
 
     u = X.dot(theta)
     eu = np.exp(-u)
     p = 1 / (1 + eu)
 
     fval = np.sum(np.log(1 + eu) + u * (1 - y))
-    fgrad = X.T.dot(p - y)
-    fhess = X.T.dot(np.diag(eu * p**2).dot(X))
+
+    fgrad = None
+    fhess = None
+    if compute_grads:
+        fgrad = X.T.dot(p - y)
+        fhess = X.T.dot(np.diag(eu * p**2).dot(X))
 
     return fval, fgrad, fhess
 
-def linsys(theta, A, b):
+def linsys(theta, A, b, compute_grads=True):
 
     H = A.T.dot(A)
     v = A.T.dot(b)
 
     fval = 0.5 * theta.T.dot(H).dot(theta) - theta.T.dot(v)
-    fgrad = H.dot(theta) - v
-    fhess = H
+
+    fgrad = None
+    fhess = None
+    if compute_grads:
+        fgrad = H.dot(theta) - v
+        fhess = H
 
     return fval, fgrad, fhess
 
@@ -38,7 +47,7 @@ def test_logistic(n=100, m=5000):
     y = (np.random.rand(m) < p_star).astype(float)
 
     # build the objective
-    obj = lambda theta: logistic_regression(theta, X, y)
+    obj = partial(logistic_regression, X=X, y=y)
 
     # minimize using Newton's method
     xk, fvals, gradnorms = optimize(0.1*np.random.randn(n), obj, stepsize=0.9, rho=0.1)
@@ -53,7 +62,7 @@ def test_linsys(n=500, m=2000):
 
     theta_lsq = np.linalg.lstsq(A, b)[0]
 
-    obj = lambda theta: linsys(theta, A, b)
+    obj = partial(linsys, A=A, b=b)
     xk, fvals, gradnorms = optimize(0.1*np.random.randn(n), obj)
 
     return xk, theta_lsq, theta_star, fvals, gradnorms

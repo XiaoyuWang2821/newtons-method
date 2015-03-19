@@ -1,12 +1,54 @@
 """
 Newton's Method
+
 """
 
 import numpy as np
 
-def update(xk, oracle, stepsize, rho):
+def linesearch(x, deltax, obj, fgrad, alpha, beta):
     """
-    Computes the Newton update step
+    Line search
+
+    Parameters
+    ----------
+    x : array_like
+
+    deltax : array_like
+        Search direction
+
+    oracle : function
+
+    fgrad : array_like
+
+    alpha : float
+
+    beta : float
+
+    Returns
+    -------
+    x_next : array_like
+        The new location
+
+    """
+
+    # initialize step size to 1
+    t = 1
+
+    # other initialization
+    fx = obj(x)
+    innerprod = fgrad.T.dot(deltax)
+
+    # while step length is too big
+    while obj(x + t*deltax) > (fx + alpha * t * innerprod):
+
+        # decrease step length
+        t = beta * t
+
+    return x + t*deltax
+
+def update(xk, oracle, stepsize, rho, alpha=0.01, beta=0.5):
+    """
+    Computes the Newton update step, with backtracking line search
 
     Parameters
     ----------
@@ -36,13 +78,17 @@ def update(xk, oracle, stepsize, rho):
     """
 
     # query the oracle for the objective, gradient, and hessian
-    fval, df, H = oracle(xk)
+    fval, fgrad, H = oracle(xk)
 
-    # compute the new update
-    x_new =  xk - np.linalg.solve(H + rho * np.eye(xk.size), stepsize * df)
+    # compute the search direction
+    deltax = -np.linalg.solve(H + rho * np.eye(xk.size), stepsize * fgrad)
+
+    # line search
+    obj = lambda x: oracle(x, compute_grads=False)[0]
+    x_new = linesearch(xk, deltax, obj, fgrad, alpha, beta)
 
     # the norm of the gradient
-    gradnorm = np.sqrt(df.T.dot(H.dot(df)))
+    gradnorm = np.sqrt(fgrad.T.dot(H.dot(fgrad)))
 
     return x_new, fval, gradnorm
 
