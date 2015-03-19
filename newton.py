@@ -80,15 +80,19 @@ def update(xk, oracle, stepsize, rho, alpha=0.01, beta=0.5):
     # query the oracle for the objective, gradient, and hessian
     fval, fgrad, H = oracle(xk)
 
+    # clip negative eigenvalues (for non-convex problems)
+    eigvals, eigvecs = np.linalg.eigh(H)
+    H_clipped = eigvecs.dot(np.diag(eigvals * (eigvals > 0)).dot(eigvecs.T))
+
     # compute the search direction
-    deltax = -np.linalg.solve(H + rho * np.eye(xk.size), stepsize * fgrad)
+    deltax = -np.linalg.solve(H_clipped + rho * np.eye(xk.size), stepsize * fgrad)
 
     # line search
     obj = lambda x: oracle(x, compute_grads=False)[0]
     x_new = linesearch(xk, deltax, obj, fgrad, alpha, beta)
 
     # the norm of the gradient
-    gradnorm = np.sqrt(fgrad.T.dot(H.dot(fgrad)))
+    gradnorm = np.sqrt(fgrad.T.dot(H_clipped.dot(fgrad)))
 
     return x_new, fval, gradnorm
 
