@@ -5,7 +5,7 @@ Newton's Method
 
 import numpy as np
 
-def linesearch(x, deltax, obj, fgrad, alpha, beta):
+def _linesearch(x, deltax, obj, fgrad, alpha, beta):
     """
     Line search
 
@@ -46,7 +46,7 @@ def linesearch(x, deltax, obj, fgrad, alpha, beta):
 
     return x + t*deltax
 
-def update(xk, oracle, stepsize, rho, alpha=0.01, beta=0.5):
+def _update(xk, oracle, stepsize, rho, alpha=0.01, beta=0.5):
     """
     Computes the Newton update step, with backtracking line search
 
@@ -89,7 +89,7 @@ def update(xk, oracle, stepsize, rho, alpha=0.01, beta=0.5):
 
     # line search
     obj = lambda x: oracle(x, compute_grads=False)[0]
-    x_new = linesearch(xk, deltax, obj, fgrad, alpha, beta)
+    x_new = _linesearch(xk, deltax, obj, fgrad, alpha, beta)
 
     # the norm of the gradient
     gradnorm = np.sqrt(fgrad.T.dot(H_clipped.dot(fgrad)))
@@ -124,7 +124,7 @@ def optimize(x0, oracle, stepsize=1, rho=1e-3, maxiter=20, tol=1e-6):
     for k in range(maxiter):
 
         # compute the Newton update
-        xk, fval, gradnorm = update(xprev, oracle, stepsize, rho)
+        xk, fval, gradnorm = _update(xprev, oracle, stepsize, rho)
 
         # check if tolerance is reached
         if np.linalg.norm(xk-xprev) <= tol:
