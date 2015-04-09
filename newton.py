@@ -96,7 +96,7 @@ def _update(xk, oracle, stepsize, rho, alpha=0.01, beta=0.5):
 
     return x_new, fval, gradnorm
 
-def optimize(x0, oracle, stepsize=1, rho=1e-3, maxiter=20, tol=1e-6):
+def optimize(x0, oracle, stepsize=1, rho=1e-3, maxiter=20, tol=1e-6, debug=0):
     """
     Optimize a function using Newton's method
 
@@ -139,6 +139,9 @@ def optimize(x0, oracle, stepsize=1, rho=1e-3, maxiter=20, tol=1e-6):
         xprev = xk
 
         # update
-        print('[%i] %5.4f' % (k+1, fval))
+        if debug == 1:
+            print('\n[%i] %5.4f' % (k+1, fval))
+        elif debug > 1:
+            print('\n[%i] f=%5.4f\t||grad||=%5.4f\tstepsize=%5.4f' % (k+1, fval, gradnorm, np.linalg.norm(xk-xprev)))
 
     return xk, fvals, gradnorms
