@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='newtons-method',
       description="Newton's Method for Optimization",
