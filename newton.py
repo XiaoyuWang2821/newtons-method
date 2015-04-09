@@ -126,14 +126,14 @@ def optimize(x0, oracle, stepsize=1, rho=1e-3, maxiter=20, tol=1e-6):
         # compute the Newton update
         xk, fval, gradnorm = _update(xprev, oracle, stepsize, rho)
 
+        # store
+        fvals.append(fval)
+        gradnorms.append(gradnorm)
+
         # check if tolerance is reached
         if np.linalg.norm(xk-xprev) <= tol:
             print('Converged after %i iterations!' % k)
             break
-
-        # store
-        fvals.append(fval)
-        gradnorms.append(gradnorm)
 
         # update parameters
         xprev = xk
