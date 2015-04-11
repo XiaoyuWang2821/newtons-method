@@ -135,13 +135,13 @@ def optimize(x0, oracle, stepsize=1, rho=1e-3, maxiter=20, tol=1e-6, debug=0):
             print('Converged after %i iterations!' % k)
             break
 
-        # update parameters
-        xprev = xk
-
         # update
         if debug == 1:
             print('\n[%i] %5.4f' % (k+1, fval))
         elif debug > 1:
             print('\n[%i] f=%5.4f\t||grad||=%5.4f\tstepsize=%5.4f' % (k+1, fval, gradnorm, np.linalg.norm(xk-xprev)))
+
+        # update parameters
+        xprev = xk
 
     return xk, fvals, gradnorms
