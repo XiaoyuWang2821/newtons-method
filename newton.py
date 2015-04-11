@@ -180,4 +180,11 @@ def optimize(x0, oracle, rho=1e-3, maxiter=20, tol=1e-2, debug=0):
         # update parameters
         xprev = xk
 
+<<<<<<< HEAD
+        # update parameters
+        xprev = xk
+
+    return xk, fvals, gradnorms
+=======
     return xk, fvals, gradnorms, alphas
+>>>>>>> 48a2caadeec01d5fc759865f647cd70eeb19a905
