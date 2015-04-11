@@ -170,7 +170,7 @@ def optimize(x0, oracle, rho=1e-3, maxiter=20, tol=1e-2, debug=0):
         if debug == 1:
             print('\n[%i] %5.4f' % (k+1, fval))
         elif debug > 1:
-            print('\n[%i] f = %5.4f\t||grad|| = %5.4f\talpha = %3.2f\tstep size = %5.4f' % (k+1, fval, gradnorm, alpha, np.linalg.norm(xk-xprev)))
+            print('\n[%i] f = %5.4f\t||grad|| = %5.4f\talpha = %3.2f\tstep length = %5.4f' % (k+1, fval, gradnorm, alpha, np.linalg.norm(xk-xprev)))
 
         # check if tolerance is reached
         if gradnorm <= tol:
