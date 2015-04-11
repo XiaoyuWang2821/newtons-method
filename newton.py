@@ -48,9 +48,7 @@ def _linesearch(x, deltax, obj, fgrad, alpha, beta, debug):
         t = beta * t
 
     if debug > 1:
-        print('\n------')
-        print('-- (line search) t: %e \t fprev: %5.4f \t fnew: %5.4f \t innerprod: %5.4f  --' % (t, fx, obj(x + t*deltax), innerprod))
-        print('------')
+        print('(line search) t: %e \t fprev: %5.4f \t fnew: %5.4f \t innerprod: %5.4f' % (t, fx, obj(x + t*deltax), innerprod))
 
     return x + t*deltax
 
@@ -112,17 +110,16 @@ def _update(xk, oracle, rho, debug, alpha=0.01, beta=0.5):
             print('\n*** ERROR *** found Infs in search direction')
 
     # line search
-    obj = lambda x: oracle(x, compute_grads=False)[0]
-    x_new = _linesearch(xk, deltax, obj, fgrad, alpha, beta, debug)
+    #obj = lambda x: oracle(x, compute_grads=False)[0]
+    #x_new = _linesearch(xk, deltax, obj, fgrad, alpha, beta, debug)
+    x_new = xk + deltax
 
     # the norm of the gradient
     gradnorm = np.sqrt(fgrad.T.dot(H_clipped.dot(fgrad)))
 
     # print info about new location
     if debug:
-        print('\n------')
-        print('-- (new iterate) norm: %5.4f \t percent finite: %2.2f \t gradnorm: %5.4f --' % (np.linalg.norm(x_new), 100*np.mean(np.isfinite(x_new)), gradnorm))
-        print('------')
+        print('(new iterate) norm: %5.4f \t percent finite: %2.2f \t gradnorm: %5.4f' % (np.linalg.norm(x_new), 100*np.mean(np.isfinite(x_new)), gradnorm))
 
     # check for bad values
     if debug > 0:
